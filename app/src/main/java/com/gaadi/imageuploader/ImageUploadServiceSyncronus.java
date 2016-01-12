@@ -166,14 +166,23 @@ public class ImageUploadServiceSyncronus extends IntentService{
                 ImageUploaderApplicationController.getImageUploadeDB().updateImage(imageModel);
                 if (failureCount <= MAX_ATTEMPTS) {
                     Log.d("ankur", "failureCount <= MAX_ATTEMPTS in else: ");
-                    Handler handler = new Handler(getMainLooper());
+                    /*Handler handler = new Handler(getMainLooper());
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             Log.d("ankur", "failureCount <= MAX_ATTEMPTS in else:run ");
                             upload(imageModelList, index);
                         }
-                    }, (long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));
+                    }, (long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));*/
+                    try {
+                        Log.d("ankur", "failureCount <= MAX_ATTEMPTS in else: seelping for = "+(long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));
+
+                        // thread to sleep for 1000 milliseconds
+                        Thread.sleep((long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));
+                        upload(imageModelList, index);
+                    } catch (Exception e) {
+                        Log.d("ankur", "error in sleep = "+e.toString());
+                    }
                 } else {
                     Log.d("ankur", "failureCount <= MAX_ATTEMPTS in else:else ");
                     ImageUploaderApplicationController.getImageUploadeDB().deleteImage(imageModelList.get(index));
@@ -203,8 +212,10 @@ public class ImageUploadServiceSyncronus extends IntentService{
                     }
                 }, (long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));*/
                 try {
+                    Log.d("ankur", "failureCount <= MAX_ATTEMPTS in error seelping for = "+(long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));
                     // thread to sleep for 1000 milliseconds
                     Thread.sleep((long) (BACKOFF_MILLI_SECONDS * Math.pow(MULTIPLIER, failureCount)));
+                    upload(imageModelList, index);
                 } catch (Exception e) {
                     Log.d("ankur", "error in sleep = "+e.toString());
                 }

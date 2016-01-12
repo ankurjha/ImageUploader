@@ -25,9 +25,25 @@ public class PendingImageReceiver extends BroadcastReceiver {
 
         if (intent.getAction().toString().equals(Intent.ACTION_BOOT_COMPLETED)) {
 
-            if(!ImageUploadUtils.getBooleanSharedPreference(context, ImageUploadUtils.IMAGE_UPLOAD_SERVICE_RUNNING, false)) {
+            Log.i("ankur", "ACTION_BOOT_COMPLETED");
+            ArrayList<ImageModel> imageModelList = ImageUploaderApplicationController.getImageUploadeDB().getAllImages();
+            for (ImageModel cn : imageModelList) {
+                String log = "Id: " + cn.get_id() + " ,Ref Id: " + cn.getRef_id() + " ,Path: " + cn.getPath() + " ,try count : " + cn.getTry_count();
+                // Writing Contacts to log
+                Log.d("ankur", log);
 
-                Log.i("ankur", "ACTION_BOOT_COMPLETED");
+            }
+
+            if(!ImageUploadUtils.getBooleanSharedPreference(context, ImageUploadUtils.IMAGE_UPLOAD_SERVICE_RUNNING, false)) {
+                Log.i("ankur", "ACTION_BOOT_COMPLETED IMAGE_UPLOAD_SERVICE_RUNNING not runinng , starting the service");
+                if(pendingImageCount > 0)
+                    context.startService(startImageUploadIntent);
+            }
+
+        } else {
+            if (ImageUploadUtils.checkInternetConnectivity(context)) {
+
+                Log.i("ankur", "checkInternetConnectivity");
                 ArrayList<ImageModel> imageModelList = ImageUploaderApplicationController.getImageUploadeDB().getAllImages();
                 for (ImageModel cn : imageModelList) {
                     String log = "Id: " + cn.get_id() + " ,Ref Id: " + cn.getRef_id() + " ,Path: " + cn.getPath() + " ,try count : " + cn.getTry_count();
@@ -36,25 +52,11 @@ public class PendingImageReceiver extends BroadcastReceiver {
 
                 }
 
-                if(pendingImageCount > 0)
-                    context.startService(startImageUploadIntent);
-            }
-
-        } else {
-            if (ImageUploadUtils.checkInternetConnectivity(context)) {
                 /*CommonUtils.setIntSharedPreference(ApplicationController.getInstance(), RetrofitImageUploadService.KEY_MAXRETRY, 5);
                 Intent startImageUpload = new Intent(ApplicationController.getInstance(), RetrofitImageUploadService.class);
                 ApplicationController.getInstance().startService(startImageUpload);*/
                 if(!ImageUploadUtils.getBooleanSharedPreference(context, ImageUploadUtils.IMAGE_UPLOAD_SERVICE_RUNNING, false)) {
-                    Log.i("ankur", "checkInternetConnectivity");
-                    ArrayList<ImageModel> imageModelList = ImageUploaderApplicationController.getImageUploadeDB().getAllImages();
-                    for (ImageModel cn : imageModelList) {
-                        String log = "Id: " + cn.get_id() + " ,Ref Id: " + cn.getRef_id() + " ,Path: " + cn.getPath() + " ,try count : " + cn.getTry_count();
-                        // Writing Contacts to log
-                        Log.d("ankur", log);
-
-                    }
-
+                    Log.i("ankur", "checkInternetConnectivity IMAGE_UPLOAD_SERVICE_RUNNING not runinng , starting the service");
                     if(pendingImageCount > 0)
                         context.startService(startImageUploadIntent);
                 }

@@ -121,7 +121,7 @@ public class ImageUploadServiceSyncronus extends IntentService{
         Log.d("ankur", "uploading image PK = " + imageModelList.get(index).get_id());
         if (!ImageUploadUtils.checkInternetConnectivity(this)) {
             Log.d("ankur", "Internet naikhe ba...");
-            //return;
+            return;
         }
 
         String filePath = imageModelList.get(index).getPath();
